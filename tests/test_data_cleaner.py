@@ -98,14 +98,23 @@ class TestDataCleaner(unittest.TestCase):
         """Test que verifica que el método trim_strings elimina correctamente los espacios
         en blanco al inicio y final de los valores en las columnas especificadas, sin modificar
         el DataFrame original ni las columnas no especificadas.
-        
-        Escenario esperado:
-        - Crear un DataFrame con espacios en blanco usando make_sample_df()
-        - Llamar a trim_strings con la columna "name"
-        - Verificar que el DataFrame original no fue modificado (mantiene los espacios) (usar self.assertEqual para comparar valores específicos como strings individuales - unittest es suficiente para strings)
-        - Verificar que en el DataFrame resultante los valores de "name" no tienen espacios al inicio/final (usar self.assertEqual para comparar valores específicos como strings individuales - unittest es suficiente)
-        - Verificar que las columnas no especificadas (ej: "city") permanecen sin cambios (si comparas Series completas, usar pandas.testing.assert_series_equal() ya que maneja mejor los índices y tipos de Pandas; si comparas valores individuales, self.assertEqual es suficiente)
         """
+        df = make_sample_df()
+        # Convertir "name" a string dtype para que trim_strings lo acepte
+        df["name"] = df["name"].astype("string")
+        cleaner = DataCleaner()
+        result = cleaner.trim_strings(df, ["name"])
+
+        # El DataFrame original no debe haber sido modificado
+        self.assertEqual(df.loc[0, "name"], " Alice ")
+        self.assertEqual(df.loc[3, "name"], " Carol  ")
+
+        # Los valores de "name" en el resultado no deben tener espacios
+        self.assertEqual(result.loc[0, "name"], "Alice")
+        self.assertEqual(result.loc[3, "name"], "Carol")
+
+        # Las columnas no especificadas permanecen sin cambios
+        pdt.assert_series_equal(result["city"], df["city"])
 
     def test_trim_strings_raises_typeerror_for_non_string_column(self):
         """Test que verifica que el método trim_strings lanza un TypeError cuando
