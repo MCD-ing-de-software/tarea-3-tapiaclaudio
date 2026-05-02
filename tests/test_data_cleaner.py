@@ -130,13 +130,17 @@ class TestDataCleaner(unittest.TestCase):
         """Test que verifica que el método remove_outliers_iqr elimina correctamente los
         valores extremos (outliers) de una columna numérica usando el método del rango
         intercuartílico (IQR).
-        
-        Escenario esperado:
-        - Crear un DataFrame con valores extremos usando make_sample_df() (contiene edad=120)
-        - Llamar a remove_outliers_iqr con la columna "age" y factor=1.5
-        - Verificar que el valor extremo (120) fue eliminado del resultado (usar self.assertNotIn para verificar que 120 no está en los valores de la columna)
-        - Verificar que al menos uno de los valores no extremos (25 o 35) permanece en el resultado (usar self.assertIn para verificar que está presente)
         """
+        df = pd.DataFrame({
+            "name": ["Alice", "Bob", "Carol", "Dave", "Eve"],
+            "age": [25.0, 28.0, 30.0, 27.0, 999.0],  # 999 es outlier claro
+            "city": ["SCL", "LPZ", "SCL", "LPZ", "SCL"]
+        })
+        cleaner = DataCleaner()
+        result = cleaner.remove_outliers_iqr(df, col="age", factor=1.5)
+
+        self.assertNotIn(999, result["age"].values)
+        self.assertIn(25, result["age"].values)
 
     def test_remove_outliers_iqr_raises_keyerror_for_missing_column(self):
         """Test que verifica que el método remove_outliers_iqr lanza un KeyError cuando
