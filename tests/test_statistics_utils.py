@@ -121,11 +121,12 @@ class TestStatisticsUtils(unittest.TestCase):
     def test_min_max_scale_raises_for_constant_values(self):
         """Test que verifica que el método min_max_scale lanza un ValueError cuando
         se llama con una secuencia donde todos los valores son iguales (no hay variación).
-        
-        Escenario esperado:
-        - Crear una lista con todos los valores iguales (ej: [3, 3, 3])
-        - Llamar a min_max_scale con esa secuencia y verificar que se lanza un ValueError indicando que todos los valores son iguales (usar self.assertRaises)
         """
+        utils = StatisticsUtils()
+        arr = [3.0, 3.0, 3.0]
+
+        with self.assertRaises(ValueError):
+            utils.min_max_scale(arr)
 
 
 if __name__ == "__main__":
