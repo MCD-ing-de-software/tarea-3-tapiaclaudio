@@ -74,11 +74,12 @@ class TestStatisticsUtils(unittest.TestCase):
     def test_moving_average_only_accepts_1d_sequences(self):
         """Test que verifica que el método moving_average lanza un ValueError cuando
         se llama con una secuencia multidimensional.
-        
-        Escenario esperado:
-        - Crear una secuencia bidimensional (ej: [[1, 2], [3, 4]])
-        - Llamar a moving_average con esa secuencia y verificar que se lanza un ValueError indicando que solo se aceptan secuencias 1D (usar self.assertRaises)
         """
+        utils = StatisticsUtils()
+        arr_2d = [[1.0, 2.0], [3.0, 4.0]]
+
+        with self.assertRaises(ValueError):
+            utils.moving_average(arr_2d, window=2)
 
     def test_zscore_has_mean_zero_and_unit_std(self):
         """Test que verifica que el método zscore calcula correctamente los z-scores
